@@ -4,6 +4,7 @@ const { google } = require('googleapis');
 const dotenv = require('dotenv');
 const crypto = require('crypto');
 const cron = require('node-cron');
+const cors = require('cors');
 const data = require('./data.json');
 const app = express();
 
@@ -24,9 +25,9 @@ if (process.env.CLIENT_EMAIL === undefined || process.env.PRIVATE_KEY === undefi
 // Schedule cron task
 // Run the createEventIfMod function in case something changed
 startWeb();
-createWebhookChannel();
+// createWebhookChannel();
 cron.schedule('0 0 * * *', createWebhookChannel);
-createEventIfMod();
+// createEventIfMod();
 
 /**
  * Starts the express frontend page
@@ -34,9 +35,11 @@ createEventIfMod();
 function startWeb() {
     // Use public folder as static pages
     app.use(express.static(__dirname + '/public'));
+    app.use(cors());
 
     // Send homepage
     app.get('/', function (req, res, next) {
+        res.header('Access-Control-Allow-Origin', 'https://api.michaelzhao.xyz/log');
         res.sendFile(path.join(__dirname, 'public', 'html', 'index.html'));
     });
 
@@ -109,7 +112,7 @@ async function createWebhookChannel() {
     });
 
     // Log webhook creation
-    console.log(`[${(new Date()).toISOString()}] Created webhook!`);
+    console.log(`[${new Date().toISOString()}] Created webhook!`);
     console.log(`    | id: ${hookInfo.data.id}`);
     console.log(`    | resId: ${hookInfo.data.resourceId}`);
     console.log(`    | expire: ${hookInfo.data.expiration}`);
