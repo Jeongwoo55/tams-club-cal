@@ -25,9 +25,9 @@ if (process.env.CLIENT_EMAIL === undefined || process.env.PRIVATE_KEY === undefi
 // Schedule cron task
 // Run the createEventIfMod function in case something changed
 startWeb();
-// createWebhookChannel();
+createWebhookChannel();
 cron.schedule('0 0 * * *', createWebhookChannel);
-// createEventIfMod();
+createEventIfMod();
 
 /**
  * Starts the express frontend page
